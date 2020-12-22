@@ -1,4 +1,4 @@
-import { Controller, Delete, Get, Post, Req, Response } from '@nestjs/common';
+import { Controller, Delete, Get, Param, Post, Request, Response } from '@nestjs/common';
 import { TransactionService } from './transaction.service';
 
 @Controller('transaction')
@@ -25,14 +25,35 @@ export class TransactionController {
     }
 
     @Post()
-    async addTransaction(@Req() request: any): Promise<any> {
-        const result = await this.transactionService.addTransaction();
-        return result;
+    async addTransaction(@Request() req: any, @Response() res: any): Promise<any> {
+        const result = await this.transactionService.addTransaction(req);
+        if (result.success === true) {
+            res.status(201).json({
+                sucess: result.success,
+                data: result.data 
+            });
+        } else {
+            res.status(500).json({
+                sucess: result.success,
+                error: result.error,
+            })
+        }
+        
     }
 
-    @Delete('/:id')
-    async deleteTransaction(): Promise<any> {
-        const result = await this.transactionService.deleteTransaction();
-        return result;
+    @Delete(':id')
+    async deleteTransaction(@Param() params: any, @Response() res: any): Promise<any> {
+        const result = await this.transactionService.deleteTransaction(params);
+        if (result.success === true) {
+            res.status(201).json({
+                sucess: result.success,
+                data: result.data 
+            });
+        } else {
+            res.status(500).json({
+                sucess: result.success,
+                error: result.error,
+            })
+        }
     }
 }
